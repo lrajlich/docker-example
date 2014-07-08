@@ -2,7 +2,9 @@ Commands:
 
 # Build redis docker image 
 inside of boot2docker or other VM
+```
 make redis
+```
 
 # Run the image 
 
