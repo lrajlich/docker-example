@@ -1,5 +1,5 @@
 
 redis: 
-	cd redis; docker build -t dealpath/redis .
+	cd redis; docker build -t lrajlich/redis .
 
 .PHONY: redis
