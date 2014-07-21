@@ -6,7 +6,7 @@ This project is a comprehensive docker example. It creates 3 different docker im
 2) Clone this repository.
 
 ## Build Docker Images
-Inside of a bash shell launched by boot2docker, navigate to the project root directory. In the root directory is a Makefile, which has targets to invoke the appropriate docker build commands. The Makefile targets are "all", "sinatra", "redis", and "mysql", "sinatra\_clean", "redis\_clean", "mysql\_clean". 
+Once you have docker installed, you can launch the "boot2docker" program. This launches a VM and gives you a shell with an environment for doing "docker" work. In this bash shell launched by boot2docker, navigate to the project root directory. In the root directory is a Makefile, which has a number targets. The Makefile targets are "all", "sinatra", "redis", and "mysql", "sinatra\_clean", "redis\_clean", "mysql\_clean". Each target invokes a ```docker build``` commands. The \_clean targets run docker build with ```--no-cache=true``` parameter, forcing a full re-build of the image.
 
 The make targets invoke ```docker build``` for a specific Dockerfile. Each service has its own Dockerfile, which procedurally defines a docker image. The relevant Dockerfiles are mysql/Dockerfile, redis/Dockerfile, and sinatra/Dockerfile.
 
