@@ -1,0 +1,8 @@
+source 'http://rubygems.org'
+
+ruby "1.9.3"
+
+gem "sinatra", "1.4.3"
+gem 'foreman'
+gem 'mysql'
+gem 'redis', git: 'git://github.com/lrajlich/redis-rb.git', tag: 'v3.1.0.patch'
