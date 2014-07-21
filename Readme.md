@@ -2,11 +2,13 @@
 This project is a comprehensive docker example. It creates 3 different docker images (mysql, redis, sinatra) and then the docker images can be run as containers in 3 different ways, showing the different networking options for Docker. 
 
 ## Pre-Requisites
-1) <a href="https://docs.docker.com/installation/mac/">Install Docker</a>. The linked page takes you through the setup steps. This will install a boot2docker program. All subsequent operations are to be run from inside.<br>
+1) <a href="https://docs.docker.com/installation/mac/">Install Docker</a>. The linked page takes you through the setup steps. This will install a boot2docker program. All subsequent operations are to be run from inside boot2docker.<br>
 2) Clone this repository.
 
 ## Build Docker Images
-In the project root directory is a Makefile, which has targets to invoke the appropriate docker build commands. The Makefile targets are "all", "sinatra", "redis", and "mysql", "sinatra\_clean", "redis\_clean", "mysql\_clean". 
+Inside of a bash shell launched by boot2docker, navigate to the project root directory. In the root directory is a Makefile, which has targets to invoke the appropriate docker build commands. The Makefile targets are "all", "sinatra", "redis", and "mysql", "sinatra\_clean", "redis\_clean", "mysql\_clean". 
+
+The make targets invoke ```docker build``` for a specific Dockerfile. Each service has its own Dockerfile, which procedurally defines a docker image. The relevant Dockerfiles are mysql/Dockerfile, redis/Dockerfile, and sinatra/Dockerfile.
 
 To build all the docker images in one shot, run:
 
@@ -14,7 +16,7 @@ To build all the docker images in one shot, run:
 make all
 ```
 
-After the docker images are built, using ```docker images``` command you should be able to see three docker images "dockerexample/sinatra", "dockerexample/mysql", and "dockerexample/redis".
+After the docker images are built, using ```docker images``` command you should be able to see the three built docker images.
 Example:
 ```bash
 bash-3.2$ docker images
@@ -25,19 +27,23 @@ dockerexample/redis     latest              7d8d07f39c49        3 days ago      
 ubuntu                  14.04               e54ca5efa2e9        4 weeks ago         276.5 MB
 ```
 
+Now that the images are built, you are ready to run docker containers.
+
 ## Run Docker containers
 
-There are 3 different ways to run the docker containers, to highlight the different ways which networking is done at the container level in docker. The architecture is simple - the sinatra application serves a couple of endpoints and connects to the 2 backend services (redis & mysql) in different manners depending on how the containers are run.
+There are 3 different ways to run the docker containers, to highlight the different ways which networking can be done at the container level in docker. These are overlapping in terms of ports and container names, so you can only run the containers one way at a time.
 
 ### Run with Linking
 
-To run the containers with linking (<a href="https://docs.docker.com/userguide/dockerlinks/">Linkig documentation</a>), run:
+Linking is the method which Docker has provided to do cross-container networking inside of a host. In terms of specifics, When a container is linked, docker will set 4 environment variables () and edit the /etc/hosts file adding an entry for the linked container. Internally, on the host, docker sets up a NAT and assigns private ip addresses on that NAT to each container (eg, 172.x.x.x). In, the /etc/hosts, that private ip address is mapped to the containers "alias". This is the most "docker official" manner in which to run . Linking is covered in detail in the <a href="https://docs.docker.com/userguide/dockerlinks/">Docker User Guide.</a>
+
+To run the containers with linking, run:
 
 ```bash
 ./docker_containers_run_use_link.sh
 ```
 
-Once the containers are running, ```docker ps -a``` will show 3 running containers. The containers will have show mapped ports. 
+Once the containers are running, ```docker ps -a``` will show 3 running containers. 
 Example:
 ```bash
 bash-3.2$ docker ps -a
@@ -47,11 +53,13 @@ c8921f184c18        dockerexample/redis:latest     /usr/bin/redis-serve   6 seco
 152d0e372010        dockerexample/mysql:latest     /usr/bin/mysqld_safe   6 seconds ago       Up 3 seconds        0.0.0.0:49153->3306/tcp   mysql,sinatra/mysql 
 ```
 
-The sinatra 
+The sinatra application will connect to the backend services using the private ip address on the host's NAT. Thus when you load the application, you will see that mysql and redis see the Sinatra client as a 172.17.x.x address.
 
 To stop the containers, run ```./docker_containers_stop.sh```
 
 ### Run with host networking
+
+Host networking is another option for networking in docker. In this case, the docker container uses the host network interface directly. This somewhat breaks the container abstraction setup by docker; however, this is simpler as the container is no longer using a NAT'ed ip address. The one major downside to this approach (vs linking) is that all the containers have to share the same ports. In the case of a single tenant host, this shouldn't be a problem. To run a container with host networking, you specify ```--net=host``` as a parameter to ```docker run```
 
 To run the containers with Host networking, specifying ```--net=host``` for each container, run:
 ```bash
@@ -68,10 +76,17 @@ a3a09e0bd1e4        dockerexample/redis:latest     /usr/bin/redis-serve   6 seco
 271576fdf5f9        dockerexample/mysql:latest     /usr/bin/mysqld_safe   6 seconds ago       Up 3 seconds                            mysql   
 ```
 
+The sinatra application will connect to the backend services using the IP address for the VM (192.168.x.x) Thus when you load the application, you will see that mysql and redis see the Sinatra client as a 192.168.x.x address.
+
 To stop the containers, run ```./docker_containers_stop.sh```
 
 ### Run with port forwarding
-The final way in which the containers can be run is to create a portforwarding rule on the host VM and use localhost interface to access the application. To run the containers in this way, run:
+
+The final way in which the containers can be run is to create a portforwarding rule on the host VM and use localhost interface to access the application. This is identical at the host level (eg, the VirtualBox VM); however, this allows the convenience of being able to access the application from your computer's browser.
+
+To run the containers in this way, run:
 ```bash
 ./docker_containers_run_use_port_forwarding.sh
 ```
+
+In this case, the sinatra application will connect to the backend services using 127.0.0.1. However, in the application, the mysql and redis see the client ip address as a NAT ip address (172.17.x.x)
