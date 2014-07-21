@@ -1,5 +1,5 @@
 ## Summary
-This project is a comprehensive docker example. It creates 3 different docker images (mysql, redis, sinatra) and then the docker images can be run as containers in 3 different ways, showing the different networking options for Docker. 
+This project is a comprehensive docker example. It creates 3 different docker images (mysql, redis, sinatra) and then the docker images can be run as containers in 3 different ways, highlighting different networking options for Docker. 
 
 ## Pre-Requisites
 1) <a href="https://docs.docker.com/installation/mac/">Install Docker</a>. The linked page takes you through the setup steps. This will install a boot2docker program. All subsequent operations are to be run from inside boot2docker.<br>
