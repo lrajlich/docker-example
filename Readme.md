@@ -14,8 +14,8 @@ To build all the docker images in one shot, run:
 make all
 ```
 
-After the docker images are built, using ```docker images``` command you should be able to see three docker images "dockerexample/sinatra", "dockerexample/mysql", and "dockerexample/redis". ex:
-
+After the docker images are built, using ```docker images``` command you should be able to see three docker images "dockerexample/sinatra", "dockerexample/mysql", and "dockerexample/redis".
+Example:
 ```bash
 bash-3.2$ docker images
 REPOSITORY              TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
@@ -27,7 +27,7 @@ ubuntu                  14.04               e54ca5efa2e9        4 weeks ago     
 
 ## Run Docker containers
 
-There are 3 different ways to run the docker containers, to highlight the different ways which networking is done at the container level in docker.
+There are 3 different ways to run the docker containers, to highlight the different ways which networking is done at the container level in docker. The architecture is simple - the sinatra application serves a couple of endpoints and connects to the 2 backend services (redis & mysql) in different manners depending on how the containers are run.
 
 #### Run with Linking
 
@@ -37,6 +37,20 @@ To run the containers with linking (<a href="https://docs.docker.com/userguide/d
 ./docker_containers_run_use_link.sh
 ```
 
+Once the containers are running, ```docker ps -a``` will show 3 running containers. The containers will have show mapped ports. 
+Example:
+```bash
+bash-3.2$ docker ps -a
+CONTAINER ID        IMAGE                          COMMAND                CREATED             STATUS              PORTS                     NAMES
+4462387c8ee3        dockerexample/sinatra:latest   /usr/local/bin/forem   6 seconds ago       Up 3 seconds        0.0.0.0:8080->8080/tcp    sinatra               
+c8921f184c18        dockerexample/redis:latest     /usr/bin/redis-serve   6 seconds ago       Up 3 seconds        0.0.0.0:49154->6379/tcp   redis,sinatra/redis   
+152d0e372010        dockerexample/mysql:latest     /usr/bin/mysqld_safe   6 seconds ago       Up 3 seconds        0.0.0.0:49153->3306/tcp   mysql,sinatra/mysql 
+```
+
+The sinatra 
+
+To stop the containers, run ```./docker_containers_stop.sh```
+
 #### Run with host networking
 
 To run the containers with Host networking, specifying ```--net=host``` for each container, run:
@@ -45,6 +59,7 @@ To run the containers with Host networking, specifying ```--net=host``` for each
 ```
 
 Once the containers are running, ```docker ps -a``` will show 3 running containers. Notice that there is nothing list for "ports" as the ports are now open directly on the host interface. Also, note that name doesn't show any linking between containers.
+Example:
 ```bash
 bash-3.2$ docker ps -a
 CONTAINER ID        IMAGE                          COMMAND                CREATED             STATUS              PORTS               NAMES
@@ -52,6 +67,8 @@ e4cc23ff12d6        dockerexample/sinatra:latest   /usr/local/bin/forem   6 seco
 a3a09e0bd1e4        dockerexample/redis:latest     /usr/bin/redis-serve   6 seconds ago       Up 3 seconds                            redis               
 271576fdf5f9        dockerexample/mysql:latest     /usr/bin/mysqld_safe   6 seconds ago       Up 3 seconds                            mysql   
 ```
+
+To stop the containers, run ```./docker_containers_stop.sh```
 
 #### Run with port forwarding
 The final way in which the containers can be run is to create a portforwarding rule on the host VM and use localhost interface to access the application. To run the containers in this way, run:
