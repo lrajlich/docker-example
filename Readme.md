@@ -82,11 +82,19 @@ To stop the containers, run ```./docker_containers_stop.sh```
 
 ### Run with port forwarding
 
-The final way in which the containers can be run is to create a portforwarding rule on the host VM and use localhost interface to access the application. This is identical at the host level (eg, the VirtualBox VM); however, this allows the convenience of being able to access the application from your computer's browser.
+The final way in which the containers can be run is to create a port forwarding rule on the host VM and use localhost interface to access the application. This is a <a href="https://github.com/boot2docker/boot2docker/blob/master/doc/WORKAROUNDS.md.">somewhat official workaround</a>. This is identical on the Host VM (eg, the VirtualBox VM); however, this allows the convenience of being able to access the application from your computer's browser.
 
 To run the containers in this way, run:
 ```bash
 ./docker_containers_run_use_port_forwarding.sh
 ```
 
-In this case, the sinatra application will connect to the backend services using 127.0.0.1. However, in the application, the mysql and redis see the client ip address as a NAT ip address (172.17.x.x)
+Once the containers are running, ```docker ps -a``` will show 3 running containers.
+```bash
+CONTAINER ID        IMAGE                          COMMAND                CREATED             STATUS              PORTS                    NAMES
+f2b4c5b5c73b        dockerexample/sinatra:latest   /usr/local/bin/forem   7 seconds ago       Up 3 seconds                                 sinatra             
+e5763e68ffa1        dockerexample/redis:latest     /usr/bin/redis-serve   7 seconds ago       Up 4 seconds        0.0.0.0:6379->6379/tcp   redis               
+07e82961b082        dockerexample/mysql:latest     /usr/bin/mysqld_safe   7 seconds ago       Up 4 seconds        0.0.0.0:3306->3306/tcp   mysql 
+```
+
+In this case, the sinatra application will connect to the backend services using 127.0.0.1. However, in the application, the mysql and redis see the client ip address as a NAT ip address (172.17.x.x) instead of 127.0.0.1. I have not yet investigated why this is the case but I'm guessing it has to do with how the port forwarding rule is handled.
