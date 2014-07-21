@@ -82,7 +82,7 @@ To stop the containers, run ```./docker_containers_stop.sh```
 
 ### Run with port forwarding
 
-The final way in which the containers can be run is to create a port forwarding rule on the host VM and use localhost interface to access the application. This is a <a href="https://github.com/boot2docker/boot2docker/blob/master/doc/WORKAROUNDS.md.">somewhat official workaround</a>. This is identical on the Host VM (eg, the VirtualBox VM); however, this allows the convenience of being able to access the application from your computer's browser.
+The final way in which the containers can be run is to create a port forwarding rule on the host VM and use localhost interface to access the application. <a href="https://github.com/boot2docker/boot2docker/blob/master/doc/WORKAROUNDS.md.">This is an official workaround</a>. This is identical on the Host VM (eg, the VirtualBox VM); however, this allows the convenience of being able to access the application from your computer's browser.
 
 To run the containers in this way, run:
 ```bash
