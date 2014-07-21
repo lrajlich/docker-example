@@ -29,7 +29,7 @@ ubuntu                  14.04               e54ca5efa2e9        4 weeks ago     
 
 There are 3 different ways to run the docker containers, to highlight the different ways which networking is done at the container level in docker. The architecture is simple - the sinatra application serves a couple of endpoints and connects to the 2 backend services (redis & mysql) in different manners depending on how the containers are run.
 
-#### Run with Linking
+### Run with Linking
 
 To run the containers with linking (<a href="https://docs.docker.com/userguide/dockerlinks/">Linkig documentation</a>), run:
 
@@ -51,7 +51,7 @@ The sinatra
 
 To stop the containers, run ```./docker_containers_stop.sh```
 
-#### Run with host networking
+### Run with host networking
 
 To run the containers with Host networking, specifying ```--net=host``` for each container, run:
 ```bash
@@ -70,7 +70,7 @@ a3a09e0bd1e4        dockerexample/redis:latest     /usr/bin/redis-serve   6 seco
 
 To stop the containers, run ```./docker_containers_stop.sh```
 
-#### Run with port forwarding
+### Run with port forwarding
 The final way in which the containers can be run is to create a portforwarding rule on the host VM and use localhost interface to access the application. To run the containers in this way, run:
 ```bash
 ./docker_containers_run_use_port_forwarding.sh
